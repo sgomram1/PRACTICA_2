@@ -26,6 +26,14 @@ class TableEntry{
         		out << te.key << " -> " << te.value;
         		return out;
     		}
+
+		friend bool operator<(const TableEntry<V> &a, const TableEntry<V> &b){
+    			return a.key < b.key;
+		}
+
+		friend bool operator>(const TableEntry<V> &a, const TableEntry<V> &b){
+    			return a.key > b.key;
+		}
 };
 
 #endif
