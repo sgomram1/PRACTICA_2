@@ -35,23 +35,25 @@ class HashTable : public Dict<V>{
 
     		void insert(std::string key, V value){
         		int pos = h(key);
-        		TableEntry<V> te(key, value);
-        		if(table[pos].search(TableEntry<V>(key))){
+        		try{
+            			table[pos].search(TableEntry<V>(key));
             			throw std::runtime_error("key exists");
+        		}catch(std::runtime_error&){
+            			table[pos].insert(0, TableEntry<V>(key, value));
+            			n++;
         		}
-        		table[pos].insert(te);
-        		n++;
     		}
 
     		V search(std::string key){
         		int pos = h(key);
-        		TableEntry<V> te = table[pos].search(TableEntry<V>(key));
-        		return te.value;
+        		int index = table[pos].search(TableEntry<V>(key));
+        		return table[pos].get(index).value;
     		}
 
     		V remove(std::string key){
         		int pos = h(key);
-        		TableEntry<V> te = table[pos].remove(TableEntry<V>(key));
+        		int index = table[pos].search(TableEntry<V>(key));
+        		TableEntry<V> te = table[pos].remove(index);
         		n--;
         		return te.value;
     		}
@@ -71,7 +73,9 @@ class HashTable : public Dict<V>{
     		friend std::ostream& operator<<(std::ostream& out, const HashTable<V>& ht){
         		for(int i = 0; i < ht.max; i++){
             			out << i << ": ";
-            			ht.table[i].print();
+            			for(int j = 0; j < ht.table[i].size(); j++){
+                			out << ht.table[i].get(j) << " ";
+            			}
             			out << std::endl;
         		}
         		return out;
@@ -79,3 +83,4 @@ class HashTable : public Dict<V>{
 };
 
 #endif
+
